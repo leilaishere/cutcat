@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可愛粉色頁面 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 圍繞貓頭的小動物背景 */
+        .animal-circle {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            opacity: 0.65;
+            border-radius: 50%;
+            animation: floatAround 4s ease-in-out infinite;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 192, 203, 0.2) 100%);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+        }
+
+        .animal-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: brightness(1.2) contrast(1.15) saturate(1.1);
+            mix-blend-mode: darken;
+            border-radius: 50%;
+            clip-path: circle(50% at center);
+        }
+
+        @keyframes floatAround {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translateY(-15px) rotate(5deg) scale(1.05);
+            }
+        }
+
+        /* 移動端優化 */
+        @media (max-width: 768px) {
+            .animal-circle {
+                width: 90px;
+                height: 90px;
+                opacity: 0.55;
+            }
+        }
+
+        /* 位置設定 - 緊凑圍繞貓頭（8張圖片環繞布局） */
+        .animal-1 { top: 8%; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .animal-2 { top: 18%; right: 22%; animation-delay: 0.5s; }
+        .animal-3 { top: 42%; right: 12%; animation-delay: 1s; }
+        .animal-4 { bottom: 20%; right: 20%; animation-delay: 1.5s; }
+        .animal-5 { bottom: 8%; left: 50%; transform: translateX(-50%); animation-delay: 2s; }
+        .animal-6 { bottom: 20%; left: 20%; animation-delay: 2.5s; }
+        .animal-7 { top: 42%; left: 12%; animation-delay: 3s; }
+        .animal-8 { top: 18%; left: 22%; animation-delay: 3.5s; }
+        
+        @media (max-width: 768px) {
+            .animal-1 { top: 5%; left: 50%; }
+            .animal-2 { top: 15%; right: 15%; }
+            .animal-3 { top: 40%; right: 8%; }
+            .animal-4 { bottom: 18%; right: 15%; }
+            .animal-5 { bottom: 5%; left: 50%; }
+            .animal-6 { bottom: 18%; left: 15%; }
+            .animal-7 { top: 40%; left: 8%; }
+            .animal-8 { top: 15%; left: 15%; }
+        }
+
+        /* 封面容器 */
+        .cover-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFD6E0 0%, #FFC9D6 50%, #FFB8C8 100%);
+            z-index: 1;
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .cover-container.clicked {
+            z-index: 1;
+        }
+
+        .cover-container.clicked .cat-head {
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+
+        .cover-container.clicked .click-hint {
+            opacity: 0;
+        }
+
+        /* 貓頭容器 */
+        .cat-head {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .cat-head:hover {
+            transform: scale(1.1);
+        }
+
+        .cat-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE4E8 0%, #FFD6E0 100%);
+            box-shadow: 0 20px 60px rgba(255, 182, 193, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 120px;
+            animation: float 3s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .cat-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .click-hint {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #FF69B4;
+            font-weight: bold;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* 主內容容器 */
+        .main-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .main-content.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .message-box {
+            background: linear-gradient(135deg, 
+                rgba(255, 240, 245, 0.75) 0%, 
+                rgba(255, 228, 238, 0.75) 30%, 
+                rgba(255, 218, 234, 0.75) 60%, 
+                rgba(255, 230, 240, 0.75) 100%);
+            border-radius: 20px;
+            padding: 25px 30px;
+            max-width: 320px;
+            margin: 0 auto;
+            box-shadow: 0 15px 40px rgba(255, 182, 193, 0.5), 
+                        0 5px 15px rgba(255, 192, 203, 0.3),
+                        0 0 0 6px rgba(147, 112, 219, 0.8);
+            animation: fadeInUp 1s ease;
+            position: relative;
+            overflow: visible;
+            border: 6px solid rgba(147, 112, 219, 0.95);
+        }
+
+        /* 白色框背景裝飾 */
+        .message-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 192, 203, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 160, 190, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 60% 20%, rgba(255, 218, 224, 0.2) 0%, transparent 50%);
+            animation: rotateDecor 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotateDecor {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 裝飾性小愛心 */
+        .decor-heart {
+            position: absolute;
+            font-size: 16px;
+            opacity: 0.2;
+            pointer-events: none;
+            animation: floatDecor 3s ease-in-out infinite;
+        }
+
+        .decor-heart:nth-child(1) {
+            top: 10px;
+            left: 15px;
+            animation-delay: 0s;
+        }
+
+        .decor-heart:nth-child(2) {
+            top: 15px;
+            right: 20px;
+            animation-delay: 1s;
+        }
+
+        .decor-heart:nth-child(3) {
+            bottom: 15px;
+            left: 20px;
+            animation-delay: 2s;
+        }
+
+        .decor-heart:nth-child(4) {
+            bottom: 10px;
+            right: 15px;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes floatDecor {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-8px) scale(1.1);
+                opacity: 0.3;
+            }
+        }
+
+        /* 邊框裝飾 - 表情和蝴蝶 */
+        .border-decor {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .border-decor.butterfly {
+            animation: butterflyFloat 3s ease-in-out infinite;
+        }
+
+        .border-decor.emoji {
+            animation: emojiSpin 4s ease-in-out infinite;
+        }
+
+        @keyframes butterflyFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(-5px) rotate(5deg);
+            }
+            75% {
+                transform: translateY(-8px) rotate(-3deg);
+            }
+        }
+
+        @keyframes emojiSpin {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(15deg) scale(1.1);
+            }
+        }
+
+        /* 邊框裝飾位置 */
+        .border-top-left { top: -15px; left: -15px; }
+        .border-top-center { top: -18px; left: 50%; transform: translateX(-50%); }
+        .border-top-right { top: -15px; right: -15px; }
+        .border-middle-left { top: 50%; left: -20px; transform: translateY(-50%); }
+        .border-middle-right { top: 50%; right: -20px; transform: translateY(-50%); }
+        .border-bottom-left { bottom: -15px; left: -15px; }
+        .border-bottom-center { bottom: -18px; left: 50%; transform: translateX(-50%); }
+        .border-bottom-right { bottom: -15px; right: -15px; }
+
+        @media (max-width: 768px) {
+            .message-box {
+                max-width: 280px;
+                padding: 20px 25px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #FF1493;
+            margin: 15px 0;
+            text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.8),
+                         1px 1px 3px rgba(255, 182, 193, 0.4);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .message-text {
+                font-size: 20px;
+            }
+        }
+
+        .emoji-line {
+            font-size: 36px;
+            margin: 12px 0;
+            animation: bounce 2s ease-in-out infinite;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .emoji-line {
+                font-size: 32px;
+                margin: 10px 0;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        /* 親親表情特效 */
+        .kiss-emoji {
+            position: fixed;
+            font-size: 50px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUp 3s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-500px) rotate(360deg);
+            }
+        }
+
+        /* 愛心背景裝飾 */
+        .heart-bg {
+            position: fixed;
+            font-size: 30px;
+            opacity: 0.2;
+            animation: floatSlow 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 封面 -->
+    <div class="cover-container" id="cover">
+        <!-- 圍繞貓頭的8隻小動物（環形排列） -->
+        <div class="animal-circle animal-1"><img src="图像 2.jpg" alt="睡覺貓"></div>
+        <div class="animal-circle animal-2"><img src="图像 3.jpg" alt="兔子"></div>
+        <div class="animal-circle animal-3"><img src="图像 4.jpg" alt="戴圍巾貓"></div>
+        <div class="animal-circle animal-4"><img src="图像 5.jpg" alt="開心貓"></div>
+        <div class="animal-circle animal-5"><img src="图像 6.jpg" alt="柴犬"></div>
+        <div class="animal-circle animal-6"><img src="图像 7.jpg" alt="蜷縮柴犬"></div>
+        <div class="animal-circle animal-7"><img src="图像 8.jpg" alt="叼貓糧"></div>
+        <div class="animal-circle animal-8"><img src="图像 9.jpg" alt="抱魚貓"></div>
+        
+        <div class="cat-head" id="catHead">
+            <div class="cat-image">
+                <img src="cat.jpg" alt="可愛貓頭">
+            </div>
+            <div class="click-hint">點擊我！💕</div>
+        </div>
+    </div>
+
+    <!-- 主內容 -->
+    <div class="main-content" id="mainContent">
+        <div class="message-box">
+            <!-- 邊框裝飾 -->
+            <span class="border-decor butterfly border-top-left">🦋</span>
+            <span class="border-decor emoji border-top-center">💫</span>
+            <span class="border-decor butterfly border-top-right">🦋</span>
+            <span class="border-decor emoji border-middle-left">🌟</span>
+            <span class="border-decor emoji border-middle-right">✨</span>
+            <span class="border-decor butterfly border-bottom-left">🦋</span>
+            <span class="border-decor emoji border-bottom-center">💝</span>
+            <span class="border-decor butterfly border-bottom-right">🦋</span>
+            
+            <!-- 內部裝飾 -->
+            <span class="decor-heart">💕</span>
+            <span class="decor-heart">✨</span>
+            <span class="decor-heart">💖</span>
+            <span class="decor-heart">🌸</span>
+            
+            <div class="emoji-line">💖✨💕</div>
+            <div class="message-text">
+                帥哥，以後就讓我來保護你
+            </div>
+            <div class="emoji-line">🐶🌹</div>
+        </div>
+    </div>
+
+    <!-- 背景音樂 -->
+    <audio id="bgMusic" loop>
+        <source src="my-favourite-day-with-you-427760.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 背景裝飾愛心 -->
+    <script>
+        // 創建背景愛心裝飾
+        function createBackgroundHearts() {
+            const hearts = ['💕', '💖', '💗', '💝', '💓'];
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(heart);
+            }
+        }
+
+        createBackgroundHearts();
+
+        // 親親表情特效
+        function createKissEffect(x, y) {
+            const kissEmojis = ['😘', '💋', '😚', '😗', '😙', '💏', '💑'];
+            const emoji = document.createElement('div');
+            emoji.className = 'kiss-emoji';
+            emoji.textContent = kissEmojis[Math.floor(Math.random() * kissEmojis.length)];
+            emoji.style.left = x + 'px';
+            emoji.style.top = y + 'px';
+            document.body.appendChild(emoji);
+
+            setTimeout(() => {
+                emoji.remove();
+            }, 3000);
+        }
+
+        // 點擊貓頭事件
+        document.getElementById('catHead').addEventListener('click', function(e) {
+            const cover = document.getElementById('cover');
+            const mainContent = document.getElementById('mainContent');
+            const music = document.getElementById('bgMusic');
+
+            // 只隱藏貓頭，保留背景
+            cover.classList.add('clicked');
+
+            // 顯示主內容
+            setTimeout(() => {
+                mainContent.classList.add('show');
+            }, 500);
+
+            // 播放音樂
+            music.play().catch(function(error) {
+                console.log('音樂播放失敗:', error);
+            });
+
+            // 創建大量親親表情特效
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createKissEffect(x, y);
+                }, i * 100);
+            }
+
+            // 持續產生親親特效
+            const kissInterval = setInterval(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                createKissEffect(x, y);
+            }, 800);
+
+            // 10秒後停止產生特效
+            setTimeout(() => {
+                clearInterval(kissInterval);
+            }, 10000);
+        });
+
+        // 點擊主內容區域也會產生親親特效
+        document.addEventListener('click', function(e) {
+            if (!document.getElementById('cover').classList.contains('clicked')) {
+                return;
+            }
+            createKissEffect(e.clientX, e.clientY);
+        });
+    </script>
+</body>
+</html>
